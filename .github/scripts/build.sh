@@ -13,9 +13,12 @@ docker run --rm --privileged \
     --no-latest \
     --${ARCH:-all}
 
-# Tag the image with the correct repository name
+# Define the image name
 IMAGE_NAME="hyperion-ng-addon-${ARCH}"
-docker tag ${IMAGE_NAME}:latest ${DOCKER_USER}/${IMAGE_NAME}:latest
+FULL_IMAGE_NAME="${DOCKER_USER}/${IMAGE_NAME}:latest"
+
+# Tag the image with the correct repository name
+docker tag ${IMAGE_NAME}:latest ${FULL_IMAGE_NAME}
 
 # Push the image to Docker Hub
-docker push ${DOCKER_USER}/${IMAGE_NAME}:latest
+docker push ${FULL_IMAGE_NAME}
