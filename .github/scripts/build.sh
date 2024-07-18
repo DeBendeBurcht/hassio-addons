@@ -9,6 +9,6 @@ docker run --rm --privileged \
     --target /data \
     --docker-user "${DOCKERHUB_USER}" \
     --docker-password "${DOCKERHUB_PASSWORD}" \
-    --image docker.io/${DOCKERHUB_USER}/hyperion-ng-addon-amd64:2.0.16 \
+    --image "docker.io/${DOCKERHUB_USER}/hyperion-ng-addon-amd64:2.0.16" \
     --no-latest \
     --${ARCH:-all}
