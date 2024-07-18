@@ -20,18 +20,13 @@ jobs:
       # Sync version to source
       - run: ./.github/scripts/update-hyperion-version.sh
 
-      - name: Docker Login
-        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
-
-      - name: Build and Push Docker images
-        shell: bash
+      - shell: bash
         env:
           DOCKER_USER: ${{ secrets.DOCKERHUB_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-        run: |
-          ./.github/scripts/build.sh amd64
-          ./.github/scripts/build.sh armhf
-          ./.github/scripts/build.sh aarch64
+        run: ./.github/scripts/build.sh amd64 &&
+             ./.github/scripts/build.sh armhf &&
+             ./.github/scripts/build.sh aarch64
 
       - uses: test-room-7/action-update-file@v1
         if: ${{ env.VERSION != env.RELEASE }}
