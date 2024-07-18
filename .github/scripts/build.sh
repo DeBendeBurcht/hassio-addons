@@ -9,7 +9,7 @@ docker run --rm --privileged \
     --target /data \
     --docker-user "${DOCKERHUB_USER}" \
     --docker-password "${DOCKERHUB_PASSWORD}" \
-    --image "${DOCKERHUB_USER}/hyperion-ng-addon-amd64:2.0.16" \
+    --image "debendeburcht/hyperion-ng-addon-amd64:2.0.16" \
     --release-tag \
     --no-latest \
     --${ARCH:-all}
