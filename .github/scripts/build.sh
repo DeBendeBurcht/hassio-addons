@@ -8,6 +8,6 @@ docker run --rm --privileged \
     -v ${GITHUB_WORKSPACE:-$(PWD)}/addon-hyperion-ng:/data \
     homeassistant/amd64-builder \
     --target /data \
-    -t, --target /home/user/myrepo/build
+    --target /home/user/myrepo/build
     --test \
     --${ARCH:-all}
