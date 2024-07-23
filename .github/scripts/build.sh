@@ -9,5 +9,5 @@ docker run --rm --privileged \
     homeassistant/amd64-builder \
     --target /data \
     --target /home/user/myrepo/build
-    --test \
+    --no-latest
     --${ARCH:-all}
