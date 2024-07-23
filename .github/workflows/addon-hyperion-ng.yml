@@ -3,6 +3,7 @@ name: 'Addon-Hyperion-NG'
 # Controls when the action will run
 on: [ workflow_dispatch ]
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
     # The type of runner that the job will run on
@@ -10,62 +11,39 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Login to Docker Hub
+      -
+        name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Check out the repository
-        uses: actions/checkout@v4
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      # Installs Node JS
+      - uses: actions/setup-node@v4
 
-      - name: Sync version to source
-        run: ./.github/scripts/update-hyperion-version.sh
+      # Sync version to source
+      - run: ./.github/scripts/update-hyperion-version.sh
 
-      - name: Create builds directory
-        run: mkdir -p builds
-
-      - name: Build amd64
-        shell: bash
+      - shell: bash
         env:
           DOCKER_USER: ${{ secrets.DOCKERHUB_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-        run: ./.github/scripts/build.sh amd64 && mv path/to/amd64/artifact builds/amd64-artifact
+        run: ./.github/scripts/build.sh amd64 &&
+             ./.github/scripts/build.sh armhf &&
+             ./.github/scripts/build.sh aarch64
 
-      - name: Build armhf
-        shell: bash
-        env:
-          DOCKER_USER: ${{ secrets.DOCKERHUB_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-        run: ./.github/scripts/build.sh armhf && mv path/to/armhf/artifact builds/armhf-artifact
-
-      - name: Build aarch64
-        shell: bash
-        env:
-          DOCKER_USER: ${{ secrets.DOCKERHUB_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-        run: ./.github/scripts/build.sh aarch64 && mv path/to/aarch64/artifact builds/aarch64-artifact
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-artifacts
-          path: builds/
-
-      - name: Update version in config.json
+      - uses: test-room-7/action-update-file@v1
         if: ${{ env.VERSION != env.RELEASE }}
-        uses: test-room-7/action-update-file@v1
         with:
           file-path: addon-hyperion-ng/config.json
           commit-msg: Update version
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create GitHub Release
+      - uses: ncipollo/release-action@v1.14.0
         if: ${{ env.VERSION != env.RELEASE }}
-        uses: ncipollo/release-action@v1.14.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -73,4 +51,3 @@ jobs:
           release_name: ${{ env.VERSION }}
           draft: false
           prerelease: true
-          files: builds/*
