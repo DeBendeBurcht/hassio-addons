@@ -60,4 +60,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push Docker image
-        run: docker push ghcr.io/yourusername/hyperion-ng-addon-aarch64:2.0.16
+        run: docker push ghcr.io/bradsjm/hyperion-ng-addon-aarch64:2.0.16
