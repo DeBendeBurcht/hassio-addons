@@ -37,24 +37,24 @@ jobs:
         run: |
           docker buildx create --use
           docker buildx build --platform linux/amd64 \
-            -t ghcr.io/testbuild/hyperion-ng-addon-amd64:${{ env.VERSION }} \
-            -t ghcr.io/testbuild/hyperion-ng-addon-amd64:latest \
+            -t ghcr.io/${{ github.repository }}/hyperion-ng-addon-amd64:${{ env.VERSION }} \
+            -t ghcr.io/${{ github.repository }}/hyperion-ng-addon-amd64:latest \
             --push .
 
       - name: Build and Push Docker Image (armhf)
         run: |
           docker buildx create --use
           docker buildx build --platform linux/arm/v7 \
-            -t ghcr.io/testbuild/hyperion-ng-addon-armhf:${{ env.VERSION }} \
-            -t ghcr.io/testbuild/hyperion-ng-addon-armhf:latest \
+            -t ghcr.io/${{ github.repository }}/hyperion-ng-addon-armhf:${{ env.VERSION }} \
+            -t ghcr.io/${{ github.repository }}/hyperion-ng-addon-armhf:latest \
             --push .
 
       - name: Build and Push Docker Image (aarch64)
         run: |
           docker buildx create --use
           docker buildx build --platform linux/arm64/v8 \
-            -t ghcr.io/testbuild/hyperion-ng-addon-aarch64:${{ env.VERSION }} \
-            -t ghcr.io/testbuild/hyperion-ng-addon-aarch64:latest \
+            -t ghcr.io/${{ github.repository }}/hyperion-ng-addon-aarch64:${{ env.VERSION }} \
+            -t ghcr.io/${{ github.repository }}/hyperion-ng-addon-aarch64:latest \
             --push .
 
       - uses: test-room-7/action-update-file@v1
