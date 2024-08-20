@@ -1,21 +1,28 @@
 name: 'Addon-Hyperion-NG'
 
+# Controls when the action will run
 on: [ workflow_dispatch ]
 
 jobs:
   build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
+      # Installs Node JS
       - uses: actions/setup-node@v4
 
+      # Sync version to source
       - run: ./.github/scripts/update-hyperion-version.sh
 
-      # Set lowercase repository name as an environment variable
-      - name: Set Lowercase Repository Name
-        run: echo "REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      - shell: bash
+        run: ./.github/scripts/build.sh amd64 &&
+             ./.github/scripts/build.sh armhf &&
+             ./.github/scripts/build.sh aarch64
 
       # Log in to GitHub Container Registry (GHCR)
       - name: Log in to GitHub Container Registry
@@ -25,31 +32,29 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build and Push Docker Image (amd64)
+      # Build and push Docker image for different architectures
       - name: Build and Push Docker Image (amd64)
         run: |
           docker buildx create --use
           docker buildx build --platform linux/amd64 \
-            -t ghcr.io/${{ env.REPO_NAME }}/hyperion-ng-addon-amd64:${{ env.VERSION }} \
-            -t ghcr.io/${{ env.REPO_NAME }}/hyperion-ng-addon-amd64:latest \
+            -t ghcr.io/testbuild/hyperion-ng-addon-amd64:${{ env.VERSION }} \
+            -t ghcr.io/testbuild/hyperion-ng-addon-amd64:latest \
             --push .
 
-      # Build and Push Docker Image (armhf)
       - name: Build and Push Docker Image (armhf)
         run: |
           docker buildx create --use
           docker buildx build --platform linux/arm/v7 \
-            -t ghcr.io/${{ env.REPO_NAME }}/hyperion-ng-addon-armhf:${{ env.VERSION }} \
-            -t ghcr.io/${{ env.REPO_NAME }}/hyperion-ng-addon-armhf:latest \
+            -t ghcr.io/testbuild/hyperion-ng-addon-armhf:${{ env.VERSION }} \
+            -t ghcr.io/testbuild/hyperion-ng-addon-armhf:latest \
             --push .
 
-      # Build and Push Docker Image (aarch64)
       - name: Build and Push Docker Image (aarch64)
         run: |
           docker buildx create --use
           docker buildx build --platform linux/arm64/v8 \
-            -t ghcr.io/${{ env.REPO_NAME }}/hyperion-ng-addon-aarch64:${{ env.VERSION }} \
-            -t ghcr.io/${{ env.REPO_NAME }}/hyperion-ng-addon-aarch64:latest \
+            -t ghcr.io/testbuild/hyperion-ng-addon-aarch64:${{ env.VERSION }} \
+            -t ghcr.io/testbuild/hyperion-ng-addon-aarch64:latest \
             --push .
 
       - uses: test-room-7/action-update-file@v1
