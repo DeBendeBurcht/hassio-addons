@@ -1,4 +1,4 @@
-{
+nbde{
   "name": "Hyperion.NG",
   "version": "2.0.16",
   "slug": "hyperionng",
@@ -31,7 +31,7 @@
   "map": [
     "config:rw"
   ],
-  "image": "bradsjm/hyperion-ng-addon-{arch}",
+  "image": "debendeburcht/hyperion-ng-addon-{arch}",
   "options": {},
   "schema": {},
   "privileged": [
