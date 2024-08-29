@@ -11,6 +11,16 @@ RUN_ID="10539641052"  # The specific run ID from the URL
 # Get the GitHub token from environment variable
 TOKEN_GITHUB="${TOKEN_GITHUB}"  # Ensure this environment variable is set correctly
 
+# Check if the token is valid by making a request to the GitHub API
+TOKEN_VALIDATION=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token ${TOKEN_GITHUB}" "https://api.github.com/user")
+
+if [ "$TOKEN_VALIDATION" -ne 200 ]; then
+    echo "Invalid token or authentication failed. HTTP status code: ${TOKEN_VALIDATION}"
+    exit 1
+fi
+
+echo "Token is valid."
+
 # Fetch the run details
 RUN_DETAILS=$(curl -s -H "Authorization: token ${TOKEN_GITHUB}" "https://api.github.com/repos/${REPO}/actions/runs/${RUN_ID}")
 
