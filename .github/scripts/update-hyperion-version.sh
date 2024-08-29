@@ -14,18 +14,18 @@ GITHUB_TOKEN="${GITHUB_TOKEN}"  # Ensure this environment variable is set
 # Fetch the run details
 RUN_DETAILS=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${REPO}/actions/runs/${RUN_ID}")
 
-# Extract the build version or artifact URL
-# Assuming the version is available in the run details or artifacts
-# You might need to adjust this depending on where the version is located
+# Extract the artifact URL
+# If you need a specific artifact, you might need additional filtering
+ARTIFACT_URL=$(echo "$RUN_DETAILS" | jq -r '.artifacts[0].archive_download_url')
+
+# Print the artifact URL
+echo "Artifact URL: ${ARTIFACT_URL}"
+
+# Extract the version from the commit message or other relevant fields
 VERSION=$(echo "$RUN_DETAILS" | jq -r ".head_commit.message" | grep -oP "Version: \K[^\s]+")
 
-# Alternatively, if the version is in an artifact, you may need to download and extract it
-# Example:
-# ARTIFACT_URL=$(echo "$RUN_DETAILS" | jq -r ".artifacts[0].archive_download_url")
-# curl -L -H "Authorization: token ${GITHUB_TOKEN}" "$ARTIFACT_URL" -o artifact.zip
-# unzip artifact.zip
-
-echo "VERSION=${VERSION}" >> $GITHUB_ENV
+# Print the version
+echo "VERSION=${VERSION}"
 
 # Fetch the latest version from the repository (if needed)
 RELEASE="$(git ls-remote --sort='v:refname' --tags https://github.com/${REPO}.git | cut -d/ -f3- | tail -n1)"
