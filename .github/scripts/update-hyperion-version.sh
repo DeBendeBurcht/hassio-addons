@@ -9,10 +9,10 @@ REPO="hyperion-project/hyperion.ng"
 RUN_ID="10539641052"  # The specific run ID from the URL
 
 # Get a GitHub personal access token (PAT) with the necessary permissions
-GITHUB_TOKEN="${GITHUB_TOKEN}"  # Ensure this environment variable is set
+TOKEN_GITHUB="${TOKEN_GITHUB}"  # Ensure this environment variable is set
 
 # Fetch the run details
-RUN_DETAILS=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${REPO}/actions/runs/${RUN_ID}")
+RUN_DETAILS=$(curl -s -H "Authorization: token ${TOKEN_GITHUB}" "https://api.github.com/repos/${REPO}/actions/runs/${RUN_ID}")
 
 # Print the full run details for debugging
 echo "Run details:"
