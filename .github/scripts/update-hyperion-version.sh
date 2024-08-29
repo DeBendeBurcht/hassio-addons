@@ -14,14 +14,19 @@ GITHUB_TOKEN="${GITHUB_TOKEN}"  # Ensure this environment variable is set
 # Fetch the run details
 RUN_DETAILS=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${REPO}/actions/runs/${RUN_ID}")
 
+# Print the full run details for debugging
+echo "Run details:"
+echo "$RUN_DETAILS"
+
 # Extract the artifact URL
-# If you need a specific artifact, you might need additional filtering
+# Ensure you adjust the jq path according to the actual structure of your API response
 ARTIFACT_URL=$(echo "$RUN_DETAILS" | jq -r '.artifacts[0].archive_download_url')
 
 # Print the artifact URL
 echo "Artifact URL: ${ARTIFACT_URL}"
 
 # Extract the version from the commit message or other relevant fields
+# Adjust jq path according to the actual structure of your API response
 VERSION=$(echo "$RUN_DETAILS" | jq -r ".head_commit.message" | grep -oP "Version: \K[^\s]+")
 
 # Print the version
