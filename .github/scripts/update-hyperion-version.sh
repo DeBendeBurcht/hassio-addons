@@ -8,8 +8,8 @@ CURRENT="$(jq -r ".version" $FILE)"
 REPO="hyperion-project/hyperion.ng"
 RUN_ID="10539641052"  # The specific run ID from the URL
 
-# Get a GitHub personal access token (PAT) with the necessary permissions
-TOKEN_GITHUB="${TOKEN_GITHUB}"  # Ensure this environment variable is set
+# Get the GitHub token from environment variable
+TOKEN_GITHUB="${TOKEN_GITHUB}"  # Ensure this environment variable is set correctly
 
 # Fetch the run details
 RUN_DETAILS=$(curl -s -H "Authorization: token ${TOKEN_GITHUB}" "https://api.github.com/repos/${REPO}/actions/runs/${RUN_ID}")
@@ -18,15 +18,13 @@ RUN_DETAILS=$(curl -s -H "Authorization: token ${TOKEN_GITHUB}" "https://api.git
 echo "Run details:"
 echo "$RUN_DETAILS"
 
-# Extract the artifact URL
-# Ensure you adjust the jq path according to the actual structure of your API response
+# Extract the artifact URL (ensure artifacts are present)
 ARTIFACT_URL=$(echo "$RUN_DETAILS" | jq -r '.artifacts[0].archive_download_url')
 
 # Print the artifact URL
 echo "Artifact URL: ${ARTIFACT_URL}"
 
 # Extract the version from the commit message or other relevant fields
-# Adjust jq path according to the actual structure of your API response
 VERSION=$(echo "$RUN_DETAILS" | jq -r ".head_commit.message" | grep -oP "Version: \K[^\s]+")
 
 # Print the version
@@ -35,8 +33,10 @@ echo "VERSION=${VERSION}"
 # Fetch the latest version from the repository (if needed)
 RELEASE="$(git ls-remote --sort='v:refname' --tags https://github.com/${REPO}.git | cut -d/ -f3- | tail -n1)"
 
-echo "RELEASE=${RELEASE}" >> $GITHUB_ENV
+# Print the latest release
+echo "RELEASE=${RELEASE}"
 
+# Update the config file if necessary
 if [ "${CURRENT}" != "${VERSION}" ]; then
     jq ".version=\"${VERSION}\"" $FILE > $FILE.tmp
     mv $FILE.tmp $FILE
