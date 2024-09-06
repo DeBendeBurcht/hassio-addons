@@ -3,7 +3,7 @@ ARG BUILD_FROM
 FROM ${BUILD_FROM}
 ARG BUILD_VERSION=PR-1763
 ARG TOKEN_GITHUB
-ARG DOWNLOAD_URL
+ARG DOWNLOAD_URL=https://api.github.com/repos/hyperion-project/hyperion.ng/actions/artifacts/10539641052/zip
 ARG BUILD_ARCH
 
 ENV LANG C.UTF-8
