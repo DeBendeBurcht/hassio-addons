@@ -31,7 +31,7 @@
   "map": [
     "config:rw"
   ],
-  "image": "debendeburcht/hyperion-ng-addon-{arch}:pr1763",
+  "image": "debendeburcht/hyperion-ng-addon-{arch}",
   "options": {},
   "schema": {},
   "privileged": [
