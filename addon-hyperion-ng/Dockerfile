@@ -1,8 +1,9 @@
 ARG BUILD_FROM
 
 FROM ${BUILD_FROM}
-ARG DOWNLOAD_URL
-ARG BUILD_VERSION
+ARG BUILD_VERSION=PR-1763
+ARG GITHUB_TOKEN
+ARG DOWNLOAD_URL=https://api.github.com/repos/hyperion-project/hyperion.ng/actions/artifacts/10539641052/zip
 ARG BUILD_ARCH
 
 ENV LANG C.UTF-8
@@ -24,13 +25,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-RUN case "${BUILD_ARCH}" in \
-    amd64) ARCH="amd64" ;; \
-    armhf) ARCH="armv7" ;; \
-    aarch64) ARCH="arm64" ;; \
-    *) echo "Unsupported architecture: ${BUILD_ARCH}" >&2; exit 1 ;; \
-    esac && \
-    wget -q "${DOWNLOAD_URL}/${BUILD_VERSION}/Hyperion-${BUILD_VERSION}-Linux-${ARCH}.tar.gz" -O - | tar -xvz -C /usr
+# Authenticate and download the artifact
+RUN wget --header="Authorization: token ${GITHUB_TOKEN}" \
+    -q "${DOWNLOAD_URL}" -O /tmp/hyperion_artifact.zip && \
+    unzip /tmp/hyperion_artifact.zip -d /usr
 
 VOLUME /config
 EXPOSE 8090 8092 19333 19400 19444 19445
