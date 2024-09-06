@@ -26,7 +26,7 @@ COPY run.sh /
 RUN chmod a+x /run.sh
 
 # Authenticate and download the artifact
-RUN wget --header="Authorization: token ${GITHUB_TOKEN}" \
+RUN wget --header="Authorization: token ${TOKEN_GITHUB}" \
     -q "${DOWNLOAD_URL}" -O /tmp/hyperion_artifact.zip && \
     unzip /tmp/hyperion_artifact.zip -d /usr
 
