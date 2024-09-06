@@ -17,9 +17,6 @@ jobs:
       # Installs Node JS
       - uses: actions/setup-node@v4
 
-      # Sync version to source
-      - run: ./.github/scripts/update-hyperion-version.sh
-
       - shell: bash
         env:
           DOCKER_USER: ${{ secrets.DOCKERHUB_USER }}
