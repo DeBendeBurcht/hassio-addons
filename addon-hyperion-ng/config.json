@@ -1,8 +1,8 @@
 {
   "name": "Hyperion.NG",
-  "version": "2.0.16",
+  "version": "PR-1763",
   "slug": "hyperionng",
-  "description": "Hyperion is an opensource Bias or Ambient Lighting implementation by the Hyperion-Project. This add-on is not supported or endorsed by the Hyperion Project and may not work with hardware capture cards or LED devices due to limitations of containers",
+  "description": "Hyperion is an opensource Bias or Ambient Lighting implementation by the Hyperion-Project. This BETA build of the add-on is not supported or endorsed by the Hyperion Project and may not work with hardware capture cards or LED devices due to limitations of containers",
   "url": "https://hyperion-project.org/",
   "arch": [
     "amd64",
@@ -31,7 +31,7 @@
   "map": [
     "config:rw"
   ],
-  "image": "debendeburcht/hyperion-ng-addon-{arch}",
+  "image": "debendeburcht/hyperion-ng-addon-{arch}:pr1763",
   "options": {},
   "schema": {},
   "privileged": [
