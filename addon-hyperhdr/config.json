@@ -31,7 +31,7 @@
   "map": [
     "config:rw"
   ],
-  "image": "jonah1024/hyperhdr-addon-{arch}",
+  "image": "debendeburcht/hyperhdr-addon-{arch}",
   "options": {},
   "schema": {},
   "privileged": [
