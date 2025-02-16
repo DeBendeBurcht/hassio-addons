@@ -1,4 +1,4 @@
-name: 'Addon-Hyperion-NG'
+name: 'Addon-HyperHDR'
 
 # Controls when the action will run
 on: [ workflow_dispatch ]
@@ -12,35 +12,35 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
 
       # Installs Node JS
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v1
 
       # Sync version to source
-      - run: ./.github/scripts/update-hyperion-version.sh
+      - run: ./.github/scripts/update-hyperhdr-version.sh
 
       - shell: bash
         env:
           DOCKER_USER: ${{ secrets.DOCKERHUB_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: ./.github/scripts/build.sh amd64 &&
-             ./.github/scripts/build.sh armhf &&
+             ./.github/scripts/build.sh armhf && 
              ./.github/scripts/build.sh aarch64
 
       - uses: test-room-7/action-update-file@v1
         if: ${{ env.VERSION != env.RELEASE }}
         with:
-          file-path: addon-hyperion-ng/config.json
+          file-path: addon-hyperhdr/config.json
           commit-msg: Update version
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: ncipollo/release-action@v1.14.0
+      - uses: actions/create-release@v1
         if: ${{ env.VERSION != env.RELEASE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.VERSION }}
-          release_name: ${{ env.VERSION }}
+          tag_name: ${{ env.RELEASE }}
+          release_name: ${{ env.RELEASE }}
           draft: false
-          prerelease: true
+          prerelease: false
