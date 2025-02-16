@@ -1,5 +1,9 @@
 # Home Assistant Addons
 
+##
+This repository fork is a newer update of the hyperhdr add on, finally supporting home assistant api calls natively, therefore enabling whole home ambilight projects
+
+
 ## addon-hyperhdr
   - HyperHDR is an open source and light weight Ambient Lighting Implementation.
   
@@ -10,7 +14,7 @@
 ## Installation instructions:
 
 
-Or simply add this github repo `https://github.com/ihrapsa/hassio-addons.git` as a third-party add-on repository in Home Assistant **Add-on Store** then install it.
+Or simply add this github repo `https://github.com/debendeburcht/hassio-addons.git` as a third-party add-on repository in Home Assistant **Add-on Store** then install it.
 See [here](https://www.home-assistant.io/hassio/installing_third_party_addons/) for more details on how to do that
 
 ## Credits:
