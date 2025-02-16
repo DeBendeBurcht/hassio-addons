@@ -4,7 +4,7 @@ ARCH=$1
 
 docker run --rm --privileged \
     -v /var/run/docker.sock:/var/run/docker.sock:ro \
-    -v ${GITHUB_WORKSPACE:-$(PWD)}/addon-hyperion-ng:/data \
+    -v ${GITHUB_WORKSPACE:-$(PWD)}/addon-hyperhdr:/data \
     homeassistant/amd64-builder \
     --target /data \
     --docker-user "${DOCKER_USER}" \
