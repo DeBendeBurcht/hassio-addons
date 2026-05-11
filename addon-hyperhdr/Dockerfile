@@ -2,13 +2,14 @@ ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
 ARG DOWNLOAD_URL
-# Updated to the newest available release
-ARG BUILD_VERSION="22.0.0.0beta2"
+# Updated to match the beta2 release string
+ARG BUILD_VERSION="22.0.0"
+ARG BETA_SUFFIX="beta2"
 ARG BUILD_ARCH
 
 ENV LANG C.UTF-8
 
-# Updated dependencies for Debian Bookworm and Qt6
+# Dependencies for Debian Bookworm (required for Qt6)
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
     git cmake build-essential \
     libasound2-dev qt6-base-dev qt6-serialport-dev libqt6sql6-sqlite qt6-svg-dev \
@@ -22,12 +23,17 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-ins
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-# HyperHDR v22+ tarballs include a /usr directory structure internally.
-# Therefore, we extract to / instead of /usr to avoid a /usr/usr/ path.
-RUN wget -q "${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-${BUILD_VERSION}-Linux-$(uname -m).tar.gz" -O - | tar -xvz -C /
+# Logic to match the Bookworm-specific filenames from your list
+# Example: HyperHDR-22.0.0~bookworm~beta2-x86_64.tar.gz
+RUN ARCH_NAME=$(uname -m); \
+    FULL_URL="${DOWNLOAD_URL}/v${BUILD_VERSION}${BETA_SUFFIX}/HyperHDR-${BUILD_VERSION}~bookworm~${BETA_SUFFIX}-${ARCH_NAME}.tar.gz"; \
+    echo "Downloading from: ${FULL_URL}"; \
+    wget -q "$FULL_URL" -O /tmp/hyperhdr.tar.gz \
+    && tar -xvz -f /tmp/hyperhdr.tar.gz -C / \
+    && rm /tmp/hyperhdr.tar.gz
 
 VOLUME /config
 EXPOSE 8090 8092 19333 19400 19444 19445
 
-RUN echo 'Running webUI on port 8090. Port 19444-19445 exposed for json, protobuffer server (screen-cap)'
+RUN echo 'Running webUI on port 8090.'
 CMD [ "/run.sh" ]
