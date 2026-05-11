@@ -21,17 +21,20 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-ins
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-# === CHANGED: Install via .deb instead of tar.gz ===
+# Install HyperHDR from official .deb
 RUN ARCH=$(uname -m) && \
     case ${ARCH} in \
-      x86_64)  DEB_ARCH="amd64" ;; \
-      aarch64) DEB_ARCH="aarch64" ;; \
-      armv7l|armv6l) DEB_ARCH="armhf" ;; \
-      *) echo "Unsupported architecture: ${ARCH}"; exit 1 ;; \
+      x86_64)  DEB="amd64" ;; \
+      aarch64) DEB="aarch64" ;; \
+      armv7l|armv6l) DEB="armhf" ;; \
+      *) echo "Unsupported arch: ${ARCH}"; exit 1 ;; \
     esac && \
-    wget -q "${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-${BUILD_VERSION}-Linux-${DEB_ARCH}.deb" -O /tmp/hyperhdr.deb && \
+    wget -q "${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-${BUILD_VERSION}~bookworm~beta2-${DEB}.deb" \
+         -O /tmp/hyperhdr.deb || \
+    wget -q "${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-${BUILD_VERSION}-Linux-${DEB}.deb" \
+         -O /tmp/hyperhdr.deb && \
     apt-get update && \
-    apt-get install -y /tmp/hyperhdr.deb && \
+    apt-get install -y --no-install-recommends /tmp/hyperhdr.deb && \
     rm /tmp/hyperhdr.deb && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
