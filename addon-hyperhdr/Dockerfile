@@ -1,40 +1,39 @@
 ARG BUILD_FROM
-
 FROM ${BUILD_FROM}
+
 ARG DOWNLOAD_URL
 ARG BUILD_VERSION
 ARG BUILD_ARCH
 
 ENV LANG C.UTF-8
 
-# from nocturno:
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends git cmake build-essential \
-    libasound2-dev qtbase5-dev libqt5serialport5-dev libqt5sql5-sqlite libqt5svg5-dev libqt5x11extras5-dev libusb-1.0-0-dev \
-    python3-minimal rpm libcec-dev libxcb-image0-dev libxcb-util0-dev libxcb-shm0-dev libglvnd-dev \
-    libxcb-render0-dev libxcb-randr0-dev libxrandr-dev libxrender-dev libavahi-core-dev libavahi-compat-libdnssd-dev \
-    libjpeg-dev libturbojpeg0-dev libssl-dev zlib1g-dev ca-certificates curl wget dialog apt-utils \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Dependencies (you already have a good list)
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
+    git cmake build-essential \
+    libasound2-dev qtbase5-dev libqt5serialport5-dev libqt5sql5-sqlite libqt5svg5-dev \
+    libqt5x11extras5-dev libusb-1.0-0-dev \
+    python3-minimal rpm libcec-dev libxcb-image0-dev libxcb-util0-dev libxcb-shm0-dev \
+    libglvnd-dev libxcb-render0-dev libxcb-randr0-dev libxrandr-dev libxrender-dev \
+    libavahi-core-dev libavahi-compat-libdnssd-dev \
+    libjpeg-dev libturbojpeg0-dev libssl-dev zlib1g-dev ca-certificates curl wget \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-# 		libqt5widgets5 \
-# 		libqt5serialport5 \
-# 		libqt5sql5-sqlite \
-# 		libqt5x11extras5 \
-# 		libavahi-core7 \
-# 		libavahi-compat-libdnssd1 \
-# 		libusb-1.0-0 \
-# 		libjpeg-dev \
-# 		libssl1.1 \
-# 		zlib1g \
-# 		libcec4 \
-# 		wget \
-# 		v4l-utils \
-# 	&& rm -rf /var/lib/apt/lists/*
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-RUN wget -q "${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-${BUILD_VERSION}-Linux-$(uname -m).tar.gz" -O - | tar -xvz -C /usr
+# === CHANGED: Install via .deb instead of tar.gz ===
+RUN ARCH=$(uname -m) && \
+    case ${ARCH} in \
+      x86_64)  DEB_ARCH="amd64" ;; \
+      aarch64) DEB_ARCH="aarch64" ;; \
+      armv7l|armv6l) DEB_ARCH="armhf" ;; \
+      *) echo "Unsupported architecture: ${ARCH}"; exit 1 ;; \
+    esac && \
+    wget -q "${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-${BUILD_VERSION}-Linux-${DEB_ARCH}.deb" -O /tmp/hyperhdr.deb && \
+    apt-get update && \
+    apt-get install -y /tmp/hyperhdr.deb && \
+    rm /tmp/hyperhdr.deb && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 VOLUME /config
 EXPOSE 8090 8092 19333 19400 19444 19445
