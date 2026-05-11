@@ -2,9 +2,8 @@ ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
 ARG DOWNLOAD_URL
-# Updated to match the beta2 release string
-ARG BUILD_VERSION="22.0.0"
-ARG BETA_SUFFIX="beta2"
+# Set this to the version part used in the GitHub TAG
+ARG BUILD_VERSION="22.0.0.0beta2"
 ARG BUILD_ARCH
 
 ENV LANG C.UTF-8
@@ -23,10 +22,11 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-ins
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-# Logic to match the Bookworm-specific filenames from your list
-# Example: HyperHDR-22.0.0~bookworm~beta2-x86_64.tar.gz
+# This logic builds the exact string: HyperHDR-22.0.0~bookworm~beta2-x86_64.tar.gz
 RUN ARCH_NAME=$(uname -m); \
-    FULL_URL="${DOWNLOAD_URL}/v${BUILD_VERSION}${BETA_SUFFIX}/HyperHDR-${BUILD_VERSION}~bookworm~${BETA_SUFFIX}-${ARCH_NAME}.tar.gz"; \
+    VERSION_ONLY="22.0.0"; \
+    BETA_ONLY="beta2"; \
+    FULL_URL="${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-${VERSION_ONLY}~bookworm~${BETA_ONLY}-${ARCH_NAME}.tar.gz"; \
     echo "Downloading from: ${FULL_URL}"; \
     wget -q "$FULL_URL" -O /tmp/hyperhdr.tar.gz \
     && tar -xvz -f /tmp/hyperhdr.tar.gz -C / \
