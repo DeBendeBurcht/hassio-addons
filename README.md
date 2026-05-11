@@ -1,7 +1,7 @@
-# Home Assistant Addons
+# Home Assistant HyperHDR Addon
 
 ##
-This repository fork is a newer update of the hyperhdr add on, finally supporting home assistant api calls natively, therefore enabling whole home ambilight projects
+This repository fork is a newer self maintained update of the hyperhdr add on, since recently finally supporting home assistant api calls natively, therefore enabling whole home ambilight projects for free.
 
 
 ## addon-hyperhdr
