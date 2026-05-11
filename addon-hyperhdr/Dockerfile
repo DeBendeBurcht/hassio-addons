@@ -22,7 +22,7 @@ RUN chmod a+x /run.sh
 
 # The fix: Explicitly use "22.0.0beta2" for the filename to match the asset list
 # while keeping "v22.0.0.0beta2" for the folder path.
-RUN wget -q "${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-22.0.0beta2-Linux-$(uname -m).tar.gz" -O - | tar -xvz -C /
+RUN wget -q "${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-22.0.0beta2-Linux-$(uname -m).tar.gz" -O - | tar -xvz -C /usr
 
 VOLUME /config
 EXPOSE 8090 8092 19333 19400 19444 19445
