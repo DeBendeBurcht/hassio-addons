@@ -7,7 +7,7 @@ ARG BUILD_ARCH
 
 ENV LANG C.UTF-8
 
-# Updated package names from Qt5 to Qt6 for Debian Bookworm
+# Updated package names for Qt6 as required by v22 on Bookworm
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends git cmake build-essential \
     libasound2-dev qt6-base-dev qt6-serialport-dev libqt6sql6-sqlite qt6-svg-dev \
     libusb-1.0-0-dev python3-minimal rpm libcec-dev libxcb-image0-dev libxcb-util0-dev \
@@ -20,9 +20,9 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-ins
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-# Target the generic Linux-x86_64 tarball from your list. 
-# Extract to / instead of /usr because the v22 tarball already contains its own 'usr/' folder.
-RUN wget -q "${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-${BUILD_VERSION}-Linux-$(uname -m).tar.gz" -O - | tar -xvz -C /
+# The fix: Explicitly use "22.0.0beta2" for the filename to match the asset list
+# while keeping "v22.0.0.0beta2" for the folder path.
+RUN wget -q "${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-22.0.0beta2-Linux-$(uname -m).tar.gz" -O - | tar -xvz -C /
 
 VOLUME /config
 EXPOSE 8090 8092 19333 19400 19444 19445
