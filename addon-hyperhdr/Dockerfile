@@ -7,7 +7,7 @@ ARG BUILD_ARCH
 
 ENV LANG C.UTF-8
 
-# Updated package names for Qt6 as required by v22 on Bookworm
+# Updated package names for Qt6 for Debian Bookworm
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends git cmake build-essential \
     libasound2-dev qt6-base-dev qt6-serialport-dev libqt6sql6-sqlite qt6-svg-dev \
     libusb-1.0-0-dev python3-minimal rpm libcec-dev libxcb-image0-dev libxcb-util0-dev \
@@ -20,9 +20,14 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-ins
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-# The fix: Explicitly use "22.0.0beta2" for the filename to match the asset list
-# while keeping "v22.0.0.0beta2" for the folder path.
-RUN wget -q "${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-22.0.0beta2-Linux-$(uname -m).tar.gz" -O - | tar -xvz -C /usr
+# ARCH FIX: Map system architecture names to HyperHDR asset names
+RUN ARCH_NAME=$(uname -m); \
+    if [ "$ARCH_NAME" = "x86_64" ]; then ARCH_NAME="x86_64"; fi; \
+    if [ "$ARCH_NAME" = "aarch64" ]; then ARCH_NAME="aarch64"; fi; \
+    if [ "$ARCH_NAME" = "armv7l" ]; then ARCH_NAME="armhf"; fi; \
+    FULL_URL="${DOWNLOAD_URL}/v${BUILD_VERSION}/HyperHDR-22.0.0beta2-Linux-${ARCH_NAME}.tar.gz"; \
+    echo "Downloading from: ${FULL_URL}"; \
+    wget -q "$FULL_URL" -O - | tar -xvz -C /usr
 
 VOLUME /config
 EXPOSE 8090 8092 19333 19400 19444 19445
